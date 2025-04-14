@@ -38,6 +38,151 @@
         <!-- <img src="assets/img/logo.png" alt=""> -->
         <h1 class="sitename">𝔸𝕘𝕚𝕝𝕖 ℕ𝕚𝕟𝕛𝕒</h1>
       </a>
+<!-- Chatbox Styles -->
+<style>
+  #chatbox {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 320px;
+    max-height: 500px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 9999;
+  }
+
+  #chatbox-header {
+    background-color: #003366;
+    color: white;
+    padding: 10px;
+    font-weight: bold;
+  }
+
+  #chat-log {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+  }
+
+  #chat-input {
+    display: flex;
+    border-top: 1px solid #ddd;
+  }
+
+  #chat-input input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  #chat-input button {
+    background-color: #003366;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+  }
+
+  .user-msg {
+    text-align: right;
+    color: #003366;
+    margin: 5px 0;
+  }
+
+  .bot-msg {
+    text-align: left;
+    margin: 5px 0;
+  }
+</style>
+
+<!-- Chatbox HTML -->
+<div id="chatbox">
+  <div id="chatbox-header">Chat with Us</div>
+  <div id="chat-log">
+    <div class="bot-msg">Hi there! Are you a Candidate or a Company?</div>
+  </div>
+  <div id="chat-input">
+    <input type="text" id="chat-message" placeholder="Type your reply..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<!-- Chatbox Script -->
+<script>
+  let chatLog = document.getElementById("chat-log");
+  let input = document.getElementById("chat-message");
+
+  let step = 0;
+  let userType = '';
+  let userData = {};
+
+  const questions = {
+    candidate: [
+      "What is your Name?",
+      "Your Email address?",
+      "Your Phone number?",
+      "Position you are looking for?",
+      "Preferred Location?"
+    ],
+    company: [
+      "What is your Name?",
+      "Your Title?",
+      "Your Company Name?",
+      "Your Phone number?",
+      "Position you'd like to fill in?"
+    ]
+  };
+
+  function appendMessage(message, sender = "bot") {
+    let div = document.createElement("div");
+    div.className = sender === "user" ? "user-msg" : "bot-msg";
+    div.textContent = message;
+    chatLog.appendChild(div);
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }
+
+  function sendMessage() {
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    appendMessage(msg, "user");
+    input.value = "";
+
+    if (step === 0) {
+      userType = msg.toLowerCase();
+      if (userType !== "candidate" && userType !== "company") {
+        appendMessage("Please type either 'Candidate' or 'Company'");
+        return;
+      }
+      step = 1;
+      appendMessage(questions[userType][0]);
+    } else {
+      const currentQuestion = questions[userType][step - 1];
+      userData[currentQuestion] = msg;
+
+      if (step < questions[userType].length) {
+        appendMessage(questions[userType][step]);
+        step++;
+      } else {
+        appendMessage("Thank you for sharing your details.");
+        appendMessage("Please call us at +91-8104572394 or email us at contact@prowess-consultancy.com");
+        input.disabled = true;
+      }
+    }
+  }
+
+  // Allow Enter key to send message
+  input.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") sendMessage();
+  });
+</script>
 
       <nav id="navmenu" class="navmenu">
         <ul>
